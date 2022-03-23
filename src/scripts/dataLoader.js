@@ -24,14 +24,17 @@ export default async function dataLoader() {
 
   const gqlPromises = Object.keys(gqlQueries).map(async (queryName) => ({
     queryName,
-    result: await gqlClient.request(
-      gqlQueries[queryName].query,
-      gqlQueries[queryName].variables
-    ),
+    result: await gqlClient
+      .request(gqlQueries[queryName].query, gqlQueries[queryName].variables)
+      .catch((err) => {
+        throw new Error(`GQL query for "${queryName}" failed, reason: ${err}`);
+      }),
   }));
 
   const fetchPromises = Object.keys(fetchEndpoints).map(async (endpoint) => {
-    const response = await fetch(fetchEndpoints[endpoint]);
+    const response = await fetch(fetchEndpoints[endpoint]).catch((err) => {
+      throw new Error(`fetch "${endpoint}" failed, reason: ${err}`);
+    });
     return {
       queryName: endpoint,
       result: await response.json(),
@@ -44,9 +47,9 @@ export default async function dataLoader() {
     //   For debugging
     console.dir(requests);
 
-    requests.forEach((query, index) => {
+    requests.forEach((query) => {
       if (query.status === "rejected") {
-        console.error(`query index ${index} unsucessful`);
+        console.error(query.reason);
         return;
       }
 
