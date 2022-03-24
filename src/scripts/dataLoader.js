@@ -131,8 +131,13 @@ export default async function dataLoader() {
               console.log(
                 `id: ${id}
                 ${artworkName} by ${artistName}
-                Buy Now
-                Ξ ${metadataPrice / 1000000000000000000}
+                ${
+                  metadataPrice === "0"
+                    ? `Place a bid
+                No reserve`
+                    : `Buy Now
+                Ξ ${metadataPrice / 1000000000000000000}`
+                }
                 1/${totalAvailable}
                 ${
                   isRecent
