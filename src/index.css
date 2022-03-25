@@ -4,7 +4,16 @@
 /* Global HTML element styles */
 
 html,
-body {
+body,
+ul,
+li,
+menu,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin: 0;
   padding: 0;
 }
@@ -12,6 +21,20 @@ body {
 * {
   font-family: Roboto, san-serif;
   font-weight: 300;
+  box-sizing: border-box;
+}
+
+strong,
+b {
+  font-weight: 600;
+}
+
+button {
+  cursor: pointer;
+}
+
+li {
+  list-style: none;
 }
 
 h1,
@@ -55,15 +78,6 @@ h7 {
 a {
   text-decoration: none;
   color: inherit;
-}
-
-strong,
-b {
-  font-weight: 600;
-}
-
-button {
-  cursor: pointer;
 }
 
 /* Global classes */
