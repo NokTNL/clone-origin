@@ -33,6 +33,7 @@ const Menu = styled.ul`
     right: 0;
     width: 15rem;
     display: ${({ isDisplaying }) => (isDisplaying ? "block" : "none")};
+    background-color: white;
     border: 0.05rem solid black;
     border-bottom-left-radius: 0.5rem;
     border-bottom-right-radius: 0.5rem;

@@ -8,11 +8,14 @@ import MaxWidthContainer from "./UI/MaxWidthContainer";
 // breakpoint for reponsive layout
 const breakpoint = "850px";
 
-const StyledNav = styled.nav`
-  padding: 0 0.8rem;
+const StyledMaxWidthContainer = styled(MaxWidthContainer)`
   position: sticky;
   top: 0;
-  z-index: 999;
+  background-color: white;
+`;
+
+const StyledNav = styled.nav`
+  padding: 0 0.8rem;
   background-color: white;
 
   @media (min-width: ${breakpoint}) {
@@ -79,7 +82,7 @@ export default function NavBar({ isShowingMenu, setIsShowingMenu }) {
   // For tracking if "Community" Button is rendered already
 
   return (
-    <MaxWidthContainer>
+    <StyledMaxWidthContainer>
       <StyledNav>
         <Container1>
           <Brand href="#">
@@ -102,6 +105,6 @@ export default function NavBar({ isShowingMenu, setIsShowingMenu }) {
           </ConnectWalletButton>
         </Container2>
       </StyledNav>
-    </MaxWidthContainer>
+    </StyledMaxWidthContainer>
   );
 }

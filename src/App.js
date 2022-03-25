@@ -7,8 +7,10 @@ import NavBar from "./components/Navbar";
 import Hero from "./components/Hero";
 
 const StyledApp = styled.div`
+  /* To disable scrolling when collapsable menu is displaying */
   height: 100vh;
-  overflow: ${({ isShowingMenu }) => (isShowingMenu ? "hidden" : "scroll")};
+  overflow-x: hidden;
+  overflow-y: ${({ isShowingMenu }) => (isShowingMenu ? "hidden" : "scroll")};
 `;
 
 function App() {
