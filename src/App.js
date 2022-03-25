@@ -4,8 +4,9 @@ import styled from "styled-components";
 import dataLoader from "./scripts/dataLoader";
 
 import NavBar from "./components/Navbar";
+import Hero from "./components/Hero";
 
-const StyledDiv = styled.div`
+const StyledApp = styled.div`
   height: 100vh;
   overflow: ${({ isShowingMenu }) => (isShowingMenu ? "hidden" : "scroll")};
 `;
@@ -19,11 +20,13 @@ function App() {
   const [isShowingMenu, setIsShowingMenu] = useState(false);
 
   return (
-    <StyledDiv isShowingMenu={isShowingMenu} className="App">
+    <StyledApp isShowingMenu={isShowingMenu} className="App">
       <NavBar
         isShowingMenu={isShowingMenu}
         setIsShowingMenu={setIsShowingMenu}
       />
+      <Hero />
+
       <h1>Header</h1>
       <h2>Header</h2>
       <h3>Header</h3>
@@ -48,7 +51,7 @@ function App() {
       <div className="text-4">Text</div>
       <div className="text-5">Text</div>
       <div className="text-6">Text</div>
-    </StyledDiv>
+    </StyledApp>
   );
 }
 

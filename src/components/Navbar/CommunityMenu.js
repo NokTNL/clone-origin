@@ -78,7 +78,7 @@ const commMenuItems = [
 ];
 
 export default function CommunityMenu({ breakpoint }) {
-  const [isDisplayingItems, setIsDisplayingItems] = useState(true);
+  const [isDisplayingItems, setIsDisplayingItems] = useState(false);
 
   const handleToggleItems = () => {
     setIsDisplayingItems((prev) => !prev);
