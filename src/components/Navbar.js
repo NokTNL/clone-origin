@@ -9,27 +9,22 @@ import FullWidthContainer from "./UI/FullWidthContainer";
 // breakpoint for reponsive layout
 const breakpoint = "850px";
 
-const StyledFullWidthContainer = styled(FullWidthContainer)`
+const StyledNav = styled.nav`
   position: sticky;
   top: 0;
+`;
+const StyledFullWidthContainer = styled(FullWidthContainer)`
   background-color: white;
 `;
 
 const StyledMaxWidthContainer = styled(MaxWidthContainer)`
   background-color: white;
-`;
-
-const StyledNav = styled.nav`
-  position: sticky;
-  top: 0;
-  background-color: white;
-
   @media (min-width: ${breakpoint}) {
     display: flex;
   }
 `;
 
-const Container1 = styled.div`
+const Container1 = styled.section`
   position: relative;
   z-index: 999;
   display: flex;
@@ -38,7 +33,7 @@ const Container1 = styled.div`
   background-color: white;
 `;
 
-const Container2 = styled.div`
+const Container2 = styled.section`
   position: absolute;
   top: 0;
   left: 0;
@@ -98,9 +93,9 @@ export default function NavBar({ isShowingMenu, setIsShowingMenu }) {
   // For tracking if "Community" Button is rendered already
 
   return (
-    <StyledFullWidthContainer>
-      <StyledMaxWidthContainer>
-        <StyledNav className="max-width">
+    <StyledNav>
+      <StyledFullWidthContainer>
+        <StyledMaxWidthContainer>
           <Container1>
             <Brand href="#">
               <h4>CloneOrigin.</h4>
@@ -121,8 +116,8 @@ export default function NavBar({ isShowingMenu, setIsShowingMenu }) {
               <span className="text-6 weight-400">Connect Wallet</span>
             </ConnectWalletButton>
           </Container2>
-        </StyledNav>
-      </StyledMaxWidthContainer>
-    </StyledFullWidthContainer>
+        </StyledMaxWidthContainer>
+      </StyledFullWidthContainer>
+    </StyledNav>
   );
 }
