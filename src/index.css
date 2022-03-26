@@ -121,4 +121,16 @@ a {
   font-weight: 400;
 }
 
+.max-width {
+  max-width: 1600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 1000px) {
+  .max-width {
+    padding: 0 50px;
+  }
+}
+
 /* Global variables */
