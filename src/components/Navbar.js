@@ -46,6 +46,10 @@ const Container2 = styled.div`
   @media (min-width: ${({ breakpoint }) => breakpoint}) {
     position: static;
     margin: 0;
+    height: initial;
+    /* To make the dropdown menu visible */
+    overflow-y: visible;
+    padding-top: 0;
 
     transition: none;
     transform: none;
