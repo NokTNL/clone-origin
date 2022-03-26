@@ -19,16 +19,22 @@ const StyledNav = styled.nav`
 `;
 
 const Container1 = styled.div`
+  position: relative;
+  z-index: 999;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background-color: white;
 `;
 
 const Container2 = styled.div`
   position: absolute;
+  top: 0;
   left: 0;
-  padding: 0 0 0 0.8rem;
+  padding: 4rem 0 0 0.8rem;
+  height: 100vh;
   width: 100vw;
+  overflow-y: scroll;
   background-color: white;
 
   /* Transition on toggle */
@@ -61,7 +67,7 @@ const ToggleMenuBotton = styled(Button)`
 `;
 
 const ConnectWalletButton = styled(Button)`
-  margin: 1rem 0 14rem 0;
+  margin: 1rem 0 1rem 0;
   align-self: center;
 
   @media (min-width: ${breakpoint}) {
