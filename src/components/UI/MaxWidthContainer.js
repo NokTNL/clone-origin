@@ -1,12 +1,14 @@
 import styled from "styled-components";
 
 const MaxWidthContainer = styled.div`
-  max-width: 1600px;
   margin-left: auto;
   margin-right: auto;
 
+  padding: 0 1.5rem;
+
   @media (min-width: 1000px) {
-    padding: 0 50px;
+    max-width: 1600px;
+    padding: 0 5rem;
   }
 `;
 

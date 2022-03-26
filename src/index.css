@@ -38,6 +38,13 @@ li {
   list-style: none;
 }
 
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Header styles */
+
 h1,
 h2,
 h3,
@@ -56,41 +63,71 @@ h6,
 
 h1,
 .h1 {
-  font-size: 4.5rem;
+  font-size: 3rem;
 }
 
 h2,
 .h2 {
-  font-size: 3.5rem;
+  font-size: 2.5rem;
 }
 
 h3,
 .h3 {
-  font-size: 2.5rem;
+  font-size: 2rem;
 }
 
 h4,
 .h4 {
-  font-size: 2rem;
+  font-size: 1.5rem;
 }
 
 h5,
 .h5 {
-  font-size: 1.5rem;
+  font-size: 1rem;
 }
 
 h6,
 .h6 {
-  font-size: 1rem;
-}
-
-.h7 {
   font-size: 0.75rem;
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
+.h7 {
+  font-size: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  h1,
+  .h1 {
+    font-size: 4.5rem;
+  }
+  h2,
+  .h2 {
+    font-size: 3.5rem;
+  }
+
+  h3,
+  .h3 {
+    font-size: 2.5rem;
+  }
+
+  h4,
+  .h4 {
+    font-size: 2rem;
+  }
+
+  h5,
+  .h5 {
+    font-size: 1.5rem;
+  }
+
+  h6,
+  .h6 {
+    font-size: 1rem;
+  }
+
+  .h7 {
+    font-size: 0.75rem;
+  }
 }
 
 /* Global classes */
@@ -119,18 +156,6 @@ a {
 
 .weight-400 {
   font-weight: 400;
-}
-
-.max-width {
-  max-width: 1600px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-@media (min-width: 1000px) {
-  .max-width {
-    padding: 0 50px;
-  }
 }
 
 /* Global variables */

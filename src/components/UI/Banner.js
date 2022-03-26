@@ -4,20 +4,15 @@ import MaxWidthContainer from "./MaxWidthContainer";
 const ImgContainer = styled.div`
   height: 650px;
   width: 100vw;
+  padding: 5rem 0rem;
   background-image: url(${({ url }) => url});
   background-size: cover;
   /* Add a shadow filter */
   box-shadow: inset 100vw 650px rgba(0, 0, 0, 0.3);
-  padding: 5rem 3rem;
 `;
 
 const BannerTitle = styled.h1`
   color: white;
-  font-size: 3rem;
-
-  @media (min-width: 768px) {
-    font-size: 4.5rem;
-  }
 `;
 
 const BannerBody = styled.div`
