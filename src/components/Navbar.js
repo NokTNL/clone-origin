@@ -12,6 +12,7 @@ const breakpoint = "850px";
 const StyledNav = styled.nav`
   position: sticky;
   top: 0;
+  z-index: 999;
 `;
 const StyledFullWidthContainer = styled(FullWidthContainer)`
   background-color: white;

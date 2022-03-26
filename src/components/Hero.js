@@ -22,12 +22,14 @@ export default function Hero() {
         </StyledBannerTitle>
         <BannerBody>
           <BannerContent>
-            <Button color="white">
-              <span className="text-6">View marketplace</span>
-            </Button>
+            <a href="https://knownorigin.io/marketplace">
+              <Button color="white">
+                <span className="text-6">View marketplace</span>
+              </Button>
+            </a>
           </BannerContent>
           <BannerContent>
-            <a href="#">
+            <a href="https://knownorigin.io/gallery/9290000-brandon-mighty-x-deadfellaz-draw-the-undead-2021">
               Brandon Mighty x Deadfellaz Draw the Undead 2021 by Deadfellaz
             </a>
           </BannerContent>
