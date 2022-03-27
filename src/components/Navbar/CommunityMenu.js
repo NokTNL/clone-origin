@@ -2,6 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 
 import MenuItem from "./MenuItem";
+import { breakpoint } from "./variables";
 
 const Container = styled.div`
   position: relative;
@@ -10,7 +11,7 @@ const Container = styled.div`
 const Title = styled.span`
   display: none;
 
-  @media (min-width: ${({ breakpoint }) => breakpoint}) {
+  @media (min-width: ${breakpoint}) {
     display: block;
     padding: 1.2rem 0.7rem;
     font-size: 1.2rem;
@@ -27,7 +28,7 @@ const DownIcon = styled.i`
 `;
 
 const Menu = styled.ul`
-  @media (min-width: ${({ breakpoint }) => breakpoint}) {
+  @media (min-width: ${breakpoint}) {
     /* position: absolute needs a positioned parent */
     position: absolute;
     right: 0;
@@ -41,7 +42,7 @@ const Menu = styled.ul`
 `;
 
 const SpecialMenuItem = styled(MenuItem)`
-  @media (min-width: ${({ breakpoint }) => breakpoint}) {
+  @media (min-width: ${breakpoint}) {
     & > * {
       padding: 1rem 0.5rem;
     }
@@ -77,7 +78,7 @@ const commMenuItems = [
   },
 ];
 
-export default function CommunityMenu({ breakpoint }) {
+export default function CommunityMenu() {
   const [isDisplayingItems, setIsDisplayingItems] = useState(false);
 
   const handleToggleItems = () => {
@@ -86,12 +87,12 @@ export default function CommunityMenu({ breakpoint }) {
 
   return (
     <Container>
-      <Title breakpoint={breakpoint} onClick={handleToggleItems}>
+      <Title onClick={handleToggleItems}>
         Community<DownIcon className="bi bi-chevron-down"></DownIcon>
       </Title>
-      <Menu isDisplaying={isDisplayingItems} breakpoint={breakpoint}>
+      <Menu isDisplaying={isDisplayingItems}>
         {commMenuItems.map((item) => (
-          <SpecialMenuItem key={item.title} breakpoint={breakpoint}>
+          <SpecialMenuItem key={item.title}>
             <a href={item.url}>{item.title}</a>
           </SpecialMenuItem>
         ))}

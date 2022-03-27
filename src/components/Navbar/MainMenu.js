@@ -1,14 +1,16 @@
 import styled from "styled-components";
+
 import MenuItem from "./MenuItem";
+import { breakpoint } from "./variables";
 
 const StyledMenu = styled.ul`
-  @media (min-width: ${({ breakpoint }) => breakpoint}) {
+  @media (min-width: ${breakpoint}) {
     display: flex;
   }
 `;
 
 const SpecialMenuItem = styled(MenuItem)`
-  @media (min-width: ${({ breakpoint }) => breakpoint}) {
+  @media (min-width: ${breakpoint}) {
     & > * {
       padding: 1.2rem 0.7rem;
     }
@@ -34,11 +36,11 @@ const mainMenuItems = [
   },
 ];
 
-export default function MainMenu({ breakpoint }) {
+export default function MainMenu() {
   return (
-    <StyledMenu breakpoint={breakpoint}>
+    <StyledMenu>
       {mainMenuItems.map((item) => (
-        <SpecialMenuItem key={item.title} breakpoint={breakpoint}>
+        <SpecialMenuItem key={item.title}>
           <a href={item.url}>{item.title}</a>
         </SpecialMenuItem>
       ))}

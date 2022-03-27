@@ -5,9 +5,7 @@ import MainMenu from "./Navbar/MainMenu";
 import CommunityMenu from "./Navbar/CommunityMenu";
 import MaxWidthContainer from "./UI/MaxWidthContainer";
 import FullWidthContainer from "./UI/FullWidthContainer";
-
-// breakpoint for reponsive layout
-const breakpoint = "850px";
+import { breakpoint } from "./Navbar/variables";
 
 const StyledNav = styled.nav`
   position: sticky;
@@ -50,7 +48,7 @@ const Container2 = styled.section`
   );
   transition: transform 0.4s cubic-bezier(0.59, 0.04, 0.49, 0.95);
 
-  @media (min-width: ${({ breakpoint }) => breakpoint}) {
+  @media (min-width: ${breakpoint}) {
     position: static;
     margin: 0;
     height: initial;
@@ -94,7 +92,7 @@ export default function NavBar({ isShowingMenu, setIsShowingMenu }) {
   // For tracking if "Community" Button is rendered already
 
   return (
-    <StyledNav>
+    <StyledNav className="navbar">
       <StyledFullWidthContainer>
         <StyledMaxWidthContainer>
           <Container1>
@@ -103,16 +101,16 @@ export default function NavBar({ isShowingMenu, setIsShowingMenu }) {
             </Brand>
             <ToggleMenuBotton onClick={handleToggleMenu}>
               {isShowingMenu ? (
-                <i class="bi bi-x-lg"></i>
+                <i className="bi bi-x-lg"></i>
               ) : (
                 <i className="bi bi-list"></i>
               )}
             </ToggleMenuBotton>
           </Container1>
 
-          <Container2 breakpoint={breakpoint} isShowingMenu={isShowingMenu}>
-            <MainMenu breakpoint={breakpoint} />
-            <CommunityMenu breakpoint={breakpoint} />
+          <Container2 isShowingMenu={isShowingMenu}>
+            <MainMenu />
+            <CommunityMenu />
             <ConnectWalletButton color="primary">
               <span className="text-6 weight-400">Connect Wallet</span>
             </ConnectWalletButton>
