@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
 
 import dataLoader from "./scripts/dataLoader";
@@ -15,9 +16,16 @@ const StyledApp = styled.div`
 `;
 
 function App() {
-  // State initialisation code
+  const dispatch = useDispatch();
+
+  /* State initialisation code */
   useEffect(() => {
     // dataLoader();
+
+    // Countdown every second
+    setInterval(() => {
+      dispatch({ type: "tick" });
+    }, 1000);
   }, []);
 
   const [isShowingMenu, setIsShowingMenu] = useState(false);

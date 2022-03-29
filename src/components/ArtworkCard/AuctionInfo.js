@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 import data from "../../scripts/dataStore";
 
@@ -59,16 +59,9 @@ export default function AuctionInfo({ index, targetData }) {
   let isReserveAuctionEnding = false;
 
   /* For countdown timers */
-  const dispatch = useDispatch();
   const timeNow = useSelector((state) => state.timeNow);
   // initialTimeNow represents the time when it was first rendered and will stay the same
   const [initialTimeNow] = useState(Date.now);
-  // Countdown every seconds
-  useEffect(() => {
-    setInterval(() => {
-      dispatch({ type: "tick" });
-    }, 1000);
-  }, []);
   // Helper functions
   // padZeros: for padding zeros in time units
   const padZeros = (num, places) => String(num).padStart(places, "0");
