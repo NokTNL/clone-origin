@@ -10,6 +10,10 @@ https://us-central1-known-origin-io.cloudfunctions.net/main/api/verification/use
 2. List of editions and collections
 https://us-central1-known-origin-io.cloudfunctions.net/main/api/network/1/collections/account/{address}?includePrivate=null&collectionType=edition
 
+
+3. Minimum bid information
+- Will only return useful stuff when there is a minimum bid value available
+https://us-central1-known-origin-io.cloudfunctions.net/main/api/network/1/reserve/edition/{artworkId}
 */
 
 import gqlQueries from "./gqlQueries";
@@ -41,11 +45,12 @@ export default async function dataLoader() {
     };
   });
 
-  const allRequestPromises = gqlPromises.concat(fetchPromises);
+  const allPrimaryRequests = gqlPromises.concat(fetchPromises);
 
-  Promise.allSettled(allRequestPromises).then((requests) => {
+  Promise.allSettled(allPrimaryRequests).then((requests) => {
     //   For debugging
     console.dir(requests);
+    console.dir(JSON.stringify(requests));
 
     requests.forEach((query) => {
       if (query.status === "rejected") {

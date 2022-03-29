@@ -1,11 +1,11 @@
 import styled from "styled-components";
 
-import { latestArtwork } from "../../scripts/dataStore";
+import data from "../../scripts/dataStore";
 
 const StyledArtworkInfo = styled.header`
   display: flex;
   flex-direction: column;
-  padding: 1rem;
+  padding: 1.5rem;
   gap: 1rem;
 `;
 
@@ -13,6 +13,10 @@ const Title = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  & > span:nth-of-type(1) {
+    padding-left: 0.5rem;
+  }
 `;
 
 const Artist = styled.a`
@@ -40,9 +44,9 @@ const Avatar = styled.figure`
   }
 `;
 
-export default function ArtworkInfo({ index }) {
+export default function ArtworkInfo({ index, targetData }) {
   const { artistName, artworkName, totalAvai, artistAddr, artworkId } =
-    latestArtwork[index];
+    data[targetData][index].artworkInfo;
 
   return (
     <StyledArtworkInfo>

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import ArtworkCard from "./ArtworkCard";
+import ArtworkCard from "./UI/ArtworkCard";
 
 import MaxWidthContainer from "./UI/MaxWidthContainer";
 
@@ -16,17 +16,20 @@ const StyledMain = styled.main`
   display: grid;
   gap: 3rem 1.5rem;
   width: 100%;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
 `;
 
 export default function LatestArtwork() {
+  // Which group of data to retrieve info from dataStore.js
+  const targetData = "latestArtwork";
+
   return (
     <section>
       <StyledMaxWidthContainer>
         <Header>Latest Artwork</Header>
         <StyledMain>
           {[0, 1, 2].map((index) => (
-            <ArtworkCard index={index} key={index} />
+            <ArtworkCard key={index} index={index} targetData={targetData} />
           ))}
         </StyledMain>
       </StyledMaxWidthContainer>

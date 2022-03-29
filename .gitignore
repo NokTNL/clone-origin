@@ -23,5 +23,5 @@ yarn-debug.log*
 yarn-error.log*
 
 Notes.md
-example-data.txt
+example-data*
 .gitignore
