@@ -15,195 +15,155 @@ https://us-central1-known-origin-io.cloudfunctions.net/main/api/network/1/collec
 - Will only return useful stuff when there is a minimum bid value available
 https://us-central1-known-origin-io.cloudfunctions.net/main/api/network/1/reserve/edition/{artworkId}
 */
+import { GraphQLClient } from "graphql-request";
 
 import gqlQueries from "./gqlQueries";
 import fetchEndpoints from "./fetchEndpoints";
+import store from "../store/mainStore";
+import dataStore from "./dataStore";
 
-import { GraphQLClient } from "graphql-request";
+// For testing if a string is a blockchain address:
+const addrRegex = /^0x[0-9a-f]+$/i;
 
 export default async function dataLoader() {
+  // All primary GQL requests
   const gqlClient = new GraphQLClient(
     "https://api.thegraph.com/subgraphs/name/knownorigin/known-origin"
   );
 
-  const gqlPromises = Object.keys(gqlQueries).map(async (queryName) => ({
-    queryName,
-    result: await gqlClient
-      .request(gqlQueries[queryName].query, gqlQueries[queryName].variables)
-      .catch((err) => {
-        throw new Error(`GQL query for "${queryName}" failed, reason: ${err}`);
-      }),
-  }));
+  const gqlRequests = Object.keys(gqlQueries).map(
+    // Each query creates a Promise to be resolved
+    async (queryName) => {
+      const { query, variables } = gqlQueries[queryName];
 
-  const fetchPromises = Object.keys(fetchEndpoints).map(async (endpoint) => {
-    const response = await fetch(fetchEndpoints[endpoint]).catch((err) => {
-      throw new Error(`fetch "${endpoint}" failed, reason: ${err}`);
+      let primaryResults = await gqlClient
+        .request(query, variables) //
+        .catch(() => {
+          throw new Error(`GQL query for "${queryName}" failed`);
+        });
+
+      // Remove hierarchy
+      const keyName = Object.keys(primaryResults)[0];
+      primaryResults = primaryResults[keyName];
+      // Extra requests:
+      // Each extra-request also creates a Promise to be resolved; only the extra requests are resolved, all GQL requests are resolved
+      const extraRequests = await primaryResults.map(async (edition, index) => {
+        // 1. Fetch "bidOnlyReservePrice" for each edition if it is a bit-only edition
+        const { auctionEnabled: isBidOnly, id: artworkId } = edition;
+        if (isBidOnly) {
+          const extraResponse = await fetch(
+            `https://us-central1-known-origin-io.cloudfunctions.net/main/api/network/1/reserve/edition/${artworkId}`
+          );
+
+          if (!extraResponse.ok) {
+            throw new Error(
+              `fetch "bidOnlyReservePrice" for ${queryName} edition ${index} failed`
+            );
+          }
+          const extraResult = await extraResponse.json();
+
+          edition.bidOnlyReservePrice = extraResult.eth_reserve_in_wei || "0";
+        } else {
+          edition.bidOnlyReservePrice = "0";
+        }
+        // returns these as the "value" of the individual extraEditionRequests promise
+        return edition.bidOnlyReservePrice;
+      });
+      const extraRequestsResults = await Promise.all(extraRequests);
+
+      // return these as the value of the gqlRequest promise
+      return { queryName, result: primaryResults };
+    }
+  );
+
+  // All primary fetch requests
+  /* const fetchRequests = Object.keys(fetchEndpoints).map(
+    //
+    async (endpoint) => {
+      const response = await fetch(fetchEndpoints[endpoint]);
+      if (!response.ok) {
+        console.error(`fetch "${endpoint}" failed`);
+        throw new Error(`fetch "${endpoint}" failed`);
+      }
+      const result = await response.json();
+
+      return {
+        queryName: endpoint,
+        result,
+      };
+    }
+  ); */
+
+  // Once all requests are settled
+  const grandResults = await Promise.all(gqlRequests) //
+    .catch((err) => {
+      alert("Something wrong with data fetching from server :(");
+      throw new Error(err);
     });
-    return {
-      queryName: endpoint,
-      result: await response.json(),
-    };
+
+  grandResults.forEach((query) => {
+    const { queryName, result } = query;
+
+    // Data processing for each query
+    const convertedQueryResult = result.map((edition) => {
+      // 1. Data extraction & restructuring for each edition
+      const {
+        id: artworkId,
+        artistAccount: artistAddr,
+        metadata: { name: artworkName, artist: artistName },
+        auctionEnabled: isBidOnly,
+        bidOnlyReservePrice,
+        metadataPrice,
+        reservePrice,
+        totalAvailable: totalAvai,
+        startDate: startTime,
+        stepSaleStepPrice: priceStep,
+        reserveAuctionStartDate: reserveAuctionStartTime,
+        reserveAuctionEndTimestamp: reserveAuctionEndTime,
+        reserveAuctionBid,
+      } = edition;
+
+      const outputEdition = {
+        artworkInfo: {
+          artworkName,
+          artworkId,
+          artistName,
+          artistAddr,
+          totalAvai,
+        },
+        auctionInfo: {
+          isBidOnly,
+          bidOnlyReservePrice,
+          reservePrice,
+          metadataPrice,
+          startTime,
+          priceStep,
+          reserveAuctionStartTime,
+          reserveAuctionEndTime,
+          reserveAuctionBid,
+        },
+      };
+
+      // 2. Convert all string-notated numbers into real numbers
+      for (const property in outputEdition) {
+        for (const subProperty in outputEdition[property]) {
+          const testValue = outputEdition[property][subProperty];
+          const isAddr = addrRegex.test(testValue);
+          const isNumber = testValue === "0" || parseInt(testValue);
+          // Only convert strings that are numbers but not blockchain addresses ("0xXXXXX")
+          if (!isAddr && isNumber) {
+            outputEdition[property][subProperty] = parseInt(testValue);
+          }
+        }
+      }
+      // return converted edition
+      return outputEdition;
+    });
+
+    // Assign to dataStore.js after finishing data converion in that query
+    dataStore[queryName] = convertedQueryResult;
   });
 
-  const allPrimaryRequests = gqlPromises.concat(fetchPromises);
-
-  Promise.allSettled(allPrimaryRequests).then((requests) => {
-    //   For debugging
-    console.dir(requests);
-    console.dir(JSON.stringify(requests));
-
-    requests.forEach((query) => {
-      if (query.status === "rejected") {
-        console.error(query.reason);
-        return;
-      }
-
-      // Extract query's fulfilled value out
-      const { value } = query;
-      switch (value.queryName) {
-        case "bannerArtwork":
-          (() => {
-            const {
-              id,
-              artistAccount,
-              metadata: { name: artworkName, artist: artistName },
-            } = value.result.editions[0];
-            console.log(
-              `Top Banner:
-                        id: ${id}
-                        ${artworkName} by ${artistName}
-                        Artist adress: ${artistAccount}`
-            );
-          })();
-          break;
-        case "latestArtworks":
-          (() => {
-            console.log("Latest Artworks");
-
-            value.result.editions.slice(0, 3).forEach((edition) => {
-              const {
-                id,
-                artistAccount,
-                metadata: { name: artworkName, artist: artistName },
-                auctionEnabled,
-                metadataPrice,
-                reservePrice,
-                totalAvailable,
-              } = edition;
-
-              // The price for "Place a bid" is not correct, just a placeholder
-              console.log(
-                `id: ${id}
-                  ${artworkName} by ${artistName}
-                  ${
-                    auctionEnabled
-                      ? "Place a bid (minimum)"
-                      : reservePrice === "0"
-                      ? "Buy now"
-                      : "Reserve Price"
-                  }
-                  Ξ ${
-                    auctionEnabled ? 0.1 : metadataPrice / 1000000000000000000
-                  }
-                  1/${totalAvailable}
-                  Artist adress: ${artistAccount}`
-              );
-            });
-          })();
-          break;
-        case "recentScheduledEditions":
-        case "soonScheduledEditions":
-          (() => {
-            const isRecent = value.queryName === "recentScheduledEditions";
-            console.log(
-              `Upcoming sales: ${isRecent ? "Buy now" : "Starting Soon"}`
-            );
-
-            value.result[`${value.queryName}`].forEach((edition) => {
-              const {
-                id,
-                artistAccount,
-                metadata: { name: artworkName, artist: artistName },
-                metadataPrice,
-                totalAvailable,
-                startDate,
-              } = edition;
-
-              const timeDifference = new Date(
-                parseInt(startDate + "000") - Date.now()
-              );
-
-              console.log(
-                `id: ${id}
-                ${artworkName} by ${artistName}
-                ${
-                  metadataPrice === "0"
-                    ? `Place a bid
-                No reserve`
-                    : `Buy Now
-                Ξ ${metadataPrice / 1000000000000000000}`
-                }
-                1/${totalAvailable}
-                ${
-                  isRecent
-                    ? ""
-                    : `Sales starts in ${timeDifference.getUTCHours()} h ${timeDifference.getUTCMinutes()} m ${timeDifference.getUTCSeconds()} s`
-                } 
-                Artist adress: ${artistAccount}
-                        `
-              );
-            });
-          })();
-          break;
-        case "reserveAuctionsEndingSoon":
-        case "reserveAuctionsStartingSoon":
-          (() => {
-            const isEndingSoon =
-              value.queryName === "reserveAuctionsEndingSoon";
-            console.log(
-              `24hr Reserve Auctions: ${
-                isEndingSoon ? "Ending Soon" : "Starting Soon"
-              }`
-            );
-
-            value.result.reserveAuctionsStartingSoon.forEach((edition) => {
-              const {
-                id,
-                artistAccount,
-                metadata: { name: artworkName, artist: artistName },
-                metadataPrice,
-                totalAvailable,
-                startDate,
-              } = edition;
-
-              const timeDifference = new Date(
-                parseInt(startDate + "000") - Date.now()
-              );
-
-              console.log(
-                `id: ${id}
-                ${artworkName} by ${artistName}
-                ${isEndingSoon ? "Current bid" : "Reserve price"}
-                Ξ ${metadataPrice / 1000000000000000000}
-                1/${totalAvailable}
-                ${
-                  isEndingSoon ? "Auction ends in" : "Sales starts in"
-                } ${`${timeDifference.getUTCHours()} h ${timeDifference.getUTCMinutes()} m ${timeDifference.getUTCSeconds()} s`}
-                Artist adress: ${artistAccount}
-                        `
-              );
-            });
-          })();
-          break;
-        case "bannersUrl":
-          (() => {
-            console.log("Banners:");
-            console.dir(value.result.banners);
-          })();
-          break;
-        default:
-          console.error(`Unexpected query name: ${value.queryName}`);
-      }
-    });
-  });
+  // Display the App once all data are loaded
+  store.dispatch({ type: "CONFIRM_DATA_LOADED" });
 }

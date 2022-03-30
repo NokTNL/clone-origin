@@ -89,8 +89,6 @@ export default function NavBar({ isShowingMenu, setIsShowingMenu }) {
     setIsShowingMenu((prev) => !prev);
   };
 
-  // For tracking if "Community" Button is rendered already
-
   return (
     <StyledNav className="navbar">
       <StyledFullWidthContainer>

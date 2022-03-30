@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 
 import dataLoader from "./scripts/dataLoader";
@@ -17,28 +17,33 @@ const StyledApp = styled.div`
 
 function App() {
   const dispatch = useDispatch();
+  const isDataLoaded = useSelector((state) => state.isDataLoaded);
+  const [isShowingMenu, setIsShowingMenu] = useState(false);
 
   /* State initialisation code */
   useEffect(() => {
+    // Load data for the whole page
     // dataLoader();
 
-    // Countdown every second
+    // Renew timeNow every second to mensure countdowns are working
     setInterval(() => {
-      dispatch({ type: "tick" });
+      dispatch({ type: "tickTimer" });
     }, 1000);
   }, []);
 
-  const [isShowingMenu, setIsShowingMenu] = useState(false);
-
   return (
-    <StyledApp isShowingMenu={isShowingMenu} className="App">
-      <NavBar
-        isShowingMenu={isShowingMenu}
-        setIsShowingMenu={setIsShowingMenu}
-      />
-      <Hero />
-      <LatestArtworks />
-    </StyledApp>
+    <>
+      {isDataLoaded && (
+        <StyledApp isShowingMenu={isShowingMenu} className="App">
+          <NavBar
+            isShowingMenu={isShowingMenu}
+            setIsShowingMenu={setIsShowingMenu}
+          />
+          <Hero />
+          <LatestArtworks />
+        </StyledApp>
+      )}
+    </>
   );
 }
 

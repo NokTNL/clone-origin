@@ -12,15 +12,20 @@ export const actions = {
   example: exampleSlice.actions,
 }; */
 
-const countdownReducer = (state = { timeNow: Date.now() }, action) => {
+const rootReducer = (
+  state = { timeNow: Date.now(), isDataLoaded: false },
+  action
+) => {
   switch (action.type) {
-    case "tick":
+    case "tickTimer":
       return { ...state, timeNow: Date.now() };
+    case "CONFIRM_DATA_LOADED":
+      return { ...state, isDataLoaded: true };
     default:
       return state;
   }
 };
 
-const store = createStore(countdownReducer);
+const store = createStore(rootReducer);
 
 export default store;

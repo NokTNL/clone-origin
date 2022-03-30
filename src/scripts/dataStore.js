@@ -1,4 +1,8 @@
-const latestArtwork = new Array(3).fill({
+const data = {};
+
+// !!! These are example data and will be overwritten by dataLoader.js
+// !!! They are kept here for explanation purpose
+data.latestArtwork = new Array(3).fill({
   artworkInfo: {
     artworkName: `''untitled (Orange, Red, and Blue), 1959''`,
     artworkId: 9795000,
@@ -40,5 +44,4 @@ const latestArtwork = new Array(3).fill({
   },
 });
 
-const data = { latestArtwork };
 export default data;

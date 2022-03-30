@@ -75,7 +75,7 @@ export default function AuctionInfo({ index, targetData }) {
   };
 
   /* Generating text and styling for the first column */
-  const firstColData = { title: "N/A", extraTitle: "", subtitle: "N/A" };
+  const firstColData = { title: "", extraTitle: "", subtitle: "" };
   const firstColColor = { title: "", extraTitle: "", subtitle: "" };
   // Test if is "Bid only" edition
   if (isBidOnly) {
@@ -102,7 +102,7 @@ export default function AuctionInfo({ index, targetData }) {
   }
 
   /* Generating text and styling for the second column (sometimes overridde first column info) */
-  const secondColData = { title: "N/A", subtitle: "N/A" };
+  const secondColData = { title: "", subtitle: "" };
   const secondColColor = { title: "", subtitle: "" };
   //  --> Case 1 : not reserve auction
   if (startTime !== 0) {

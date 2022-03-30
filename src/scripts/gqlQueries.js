@@ -1,12 +1,15 @@
 import { gql } from "graphql-request";
 
+const gqlQueries = {};
+
 //  KO server use SECONDS timestamps
 const timeNow = Math.floor(Date.now() / 1000);
 const timeTomorrow = timeNow + 24 * 3600;
 const timeNextWeek = timeNow + 7 * 24 * 3600;
 
 // This requests the banner artwork editions data (ID seems to be random)
-const bannerArtwork = {
+// !!! not to be fetched, just as notes
+gqlQueries.bannerArtwork = {
   query: gql`
     query bannerQuery($id: String!) {
       editions(where: { id: $id }, first: 1) {
@@ -40,10 +43,12 @@ const bannerArtwork = {
     id: "7404000",
   },
 };
+// !!! deletes here because not to be fetched
+delete gqlQueries.bannerArtwork;
 
 // Upcoming sales is a combination of two queries
 // 1. recentScheduledEditions - ready to buy now
-const recentScheduledEditions = {
+gqlQueries.recentScheduledEditions = {
   query: gql`
     query editionsQuery(
       $first: Int!
@@ -162,7 +167,7 @@ const recentScheduledEditions = {
 };
 
 // 2. soonScheduledEditions - not ready to buy yet
-const soonScheduledEditions = {
+gqlQueries.soonScheduledEditions = {
   query: gql`
     query editionsQuery(
       $first: Int!
@@ -276,7 +281,7 @@ const soonScheduledEditions = {
 
 // "24hr reserve autions": 2 parts
 // 1. reserveAuctionsEndingSoon
-const reserveAuctionsEndingSoon = {
+gqlQueries.reserveAuctionsEndingSoon = {
   query: gql`
     query reserveAuctionsStartingSoonQuery($timestamp: String!, $first: Int!) {
       reserveAuctionsStartingSoon: editions(
@@ -381,7 +386,7 @@ const reserveAuctionsEndingSoon = {
 };
 
 // 2. reserveAuctionsStartingSoon
-const reserveAuctionsStartingSoon = {
+gqlQueries.reserveAuctionsStartingSoon = {
   query: gql`
     query reserveAuctionsStartingSoonQuery($timestamp: String!, $first: Int!) {
       reserveAuctionsStartingSoon: editions(
@@ -486,7 +491,7 @@ const reserveAuctionsStartingSoon = {
 };
 
 // This queries the latest X artworks
-const latestArtworks = {
+gqlQueries.latestArtwork = {
   query: gql`
     query editionsQuery(
       $first: Int!
@@ -594,12 +599,4 @@ const latestArtworks = {
   },
 };
 
-const gqlQueries = {
-  bannerArtwork,
-  recentScheduledEditions,
-  soonScheduledEditions,
-  latestArtworks,
-  reserveAuctionsEndingSoon,
-  reserveAuctionsStartingSoon,
-};
 export default gqlQueries;
