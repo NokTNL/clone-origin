@@ -11,8 +11,18 @@ const ImgContainer = styled.div`
   box-shadow: inset 100vw 650px rgba(0, 0, 0, 0.3);
 `;
 
+const StyledMaxWidthContainer = styled(MaxWidthContainer)`
+  @media (min-width: 768px) and (max-width: 1000px) {
+    padding: 0 3rem;
+  }
+`;
+
 const BannerTitle = styled.h1`
   color: white;
+
+  @media (min-width: 1000px) {
+    width: 60%;
+  }
 `;
 
 const BannerBody = styled.div`
@@ -31,7 +41,7 @@ const BannerContent = styled.div`
 const Banner = ({ children, imgUrl }) => {
   return (
     <ImgContainer url={imgUrl}>
-      <MaxWidthContainer>{children}</MaxWidthContainer>
+      <StyledMaxWidthContainer>{children}</StyledMaxWidthContainer>
     </ImgContainer>
   );
 };

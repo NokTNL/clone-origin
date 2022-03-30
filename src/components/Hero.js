@@ -4,9 +4,9 @@ import Banner, { BannerTitle, BannerContent, BannerBody } from "./UI/Banner";
 import Button from "./UI/Button";
 
 const StyledBannerTitle = styled(BannerTitle)`
-  @media (min-width: 1080px) {
+  /* @media (min-width: 1080px) {
     width: 60%;
-  }
+  } */
 `;
 
 export default function Hero() {
