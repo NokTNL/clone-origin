@@ -23,7 +23,7 @@ function App() {
   /* State initialisation code */
   useEffect(() => {
     // Load data for the whole page
-    // dataLoader();
+    dataLoader();
 
     // Renew timeNow every second to mensure countdowns are working
     setInterval(() => {

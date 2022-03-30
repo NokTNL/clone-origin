@@ -17,6 +17,7 @@ const StyledMain = styled.main`
   gap: 3rem 1.5rem;
   width: 100%;
   grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  align-items: start;
 `;
 
 export default function LatestArtwork() {
