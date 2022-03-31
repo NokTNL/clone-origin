@@ -16,7 +16,7 @@ const StyledMain = styled.main`
   display: grid;
   gap: 3rem 1.5rem;
   width: 100%;
-  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   align-items: start;
 `;
 

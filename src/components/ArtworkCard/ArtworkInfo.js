@@ -61,7 +61,6 @@ export default function ArtworkInfo({ index, targetData }) {
           <img
             src={`https://user-profile-images-cdn-bucket.storage.googleapis.com/${artistAddr}_avatar`}
             alt={artistName}
-            loading="lazy"
           />
         </Avatar>
         <span className="h5">{artistName}</span>
