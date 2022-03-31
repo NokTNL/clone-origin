@@ -1,4 +1,7 @@
-const data = {};
+// !! For test only!
+import exampleData from "./example-data";
+
+let data = {};
 
 // !!! These are example data and will be overwritten by dataLoader.js
 // !!! They are kept here for explanation purpose
@@ -43,5 +46,9 @@ data.latestArtwork = new Array(3).fill({
     reserveAuctionBid: 95000000000000000,
   },
 });
+
+/* !!! For test only */
+data = exampleData;
+console.log("Alert: using off-line example data!!!");
 
 export default data;

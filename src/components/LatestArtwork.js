@@ -16,9 +16,9 @@ export default function LatestArtwork() {
         ))}
       </ArtworkGrid>
       <SectionFooter>
-        <a href="https://knownorigin.io/marketplace?sale_type_reserve_countdown_auction=true">
+        <a href="https://knownorigin.io/marketplace">
           <Button color="primary">
-            <span className="text-6">View upcoming sales</span>
+            <span className="text-6">View marketplace</span>
           </Button>
         </a>
       </SectionFooter>

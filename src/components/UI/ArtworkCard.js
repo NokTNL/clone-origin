@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { useState } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import data from "../../scripts/dataStore";
+import data from "../../store/fetchDataStore";
 
 import ArtworkInfo from "../ArtworkCard/ArtworkInfo";
 import AuctionInfo from "../ArtworkCard/AuctionInfo";

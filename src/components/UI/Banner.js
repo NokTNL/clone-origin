@@ -40,8 +40,12 @@ const StyledMaxWidthContainer = styled(MaxWidthContainer)`
 const BannerTitle = styled.h1`
   color: white;
 
+  @media (min-width: 768px) {
+    font-size: 4.5rem;
+  }
+
   @media (min-width: 1000px) {
-    width: 60%;
+    width: 70%;
   }
 `;
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 
-import data from "../../scripts/dataStore";
+import data from "../../store/fetchDataStore";
 
 const StyledAuctionInfo = styled.section`
   border-top: 1px solid #dcdcdc;

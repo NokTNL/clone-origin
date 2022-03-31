@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import data from "../../scripts/dataStore";
+import data from "../../store/fetchDataStore";
 
 const StyledArtworkInfo = styled.header`
   display: flex;

@@ -19,8 +19,8 @@ import { GraphQLClient } from "graphql-request";
 
 import gqlQueries from "./gqlQueries";
 import fetchEndpoints from "./fetchEndpoints";
-import store from "../store/mainStore";
-import dataStore from "./dataStore";
+import reduxStore from "../store/mainStore";
+import fetchDataStore from "../store/fetchDataStore";
 
 // For testing if a string is a blockchain address:
 const addrRegex = /^0x[0-9a-f]+$/i;
@@ -116,7 +116,7 @@ export default async function dataLoader() {
     switch (queryType) {
       // Not much data processing for fetch queries
       case "fetch":
-        dataStore[queryName] = result;
+        fetchDataStore[queryName] = result;
         break;
       // Data processing for each GQL query
       case "gql":
@@ -175,7 +175,7 @@ export default async function dataLoader() {
           return outputEdition;
         });
         // Assign to dataStore.js after finishing data converion in that query
-        dataStore[queryName] = convertedQueryResult;
+        fetchDataStore[queryName] = convertedQueryResult;
         break;
 
       default:
@@ -184,8 +184,8 @@ export default async function dataLoader() {
   });
 
   // For debugging
-  // console.log(dataStore);
+  console.log(JSON.stringify(fetchDataStore));
 
   // Display the App once all data are loaded
-  store.dispatch({ type: "CONFIRM_DATA_LOADED" });
+  reduxStore.dispatch({ type: "CONFIRM_DATA_LOADED" });
 }

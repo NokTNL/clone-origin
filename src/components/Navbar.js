@@ -67,6 +67,13 @@ const Container2 = styled.section`
 
 const Brand = styled.a`
   padding: 0.8rem 0 0.8rem 0;
+
+  @media (min-width: 768px) {
+    h4,
+    .h4 {
+      font-size: 2rem;
+    }
+  }
 `;
 
 const ToggleMenuBotton = styled(Button)`
