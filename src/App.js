@@ -8,9 +8,6 @@ import NavBar from "./components/Navbar";
 import Hero from "./components/Hero";
 import LatestArtworks from "./components/LatestArtwork";
 
-// Test
-import Hero1 from "./components/Hero1";
-
 const StyledApp = styled.div`
   /* To disable scrolling when collapsable menu is displaying */
   height: 100vh;
@@ -40,11 +37,10 @@ function App() {
         isShowingMenu={isShowingMenu}
         setIsShowingMenu={setIsShowingMenu}
       />
-      {isDataLoaded && (
+      {isDataLoaded /* true */ && (
         <>
           <Hero />
           <LatestArtworks />
-          <Hero1 />
         </>
       )}
     </StyledApp>

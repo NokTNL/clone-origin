@@ -1,5 +1,3 @@
-import styled from "styled-components";
-
 import Banner, { BannerTitle, BannerContent, BannerBody } from "./UI/Banner";
 import Button from "./UI/Button";
 
