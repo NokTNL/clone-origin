@@ -45,7 +45,7 @@ export default async function dataLoader() {
       // Remove hierarchy
       const keyName = Object.keys(primaryResults)[0];
       primaryResults = primaryResults[keyName];
-      // Extra requests:
+      // Extra requests: for fetching e.g. the bioOnlyReservePrice based on the data inside primaryResults
       // Each extra-request also creates a Promise to be resolved; only the extra requests are resolved, all GQL requests are resolved
       const extraRequests = await primaryResults.map(async (edition, index) => {
         // 1. Fetch "bidOnlyReservePrice" for each edition if it is a bit-only edition
@@ -72,97 +72,119 @@ export default async function dataLoader() {
       const extraRequestsResults = await Promise.all(extraRequests);
 
       // return these as the value of the gqlRequest promise
-      return { queryName, result: primaryResults };
+      return { queryName, queryType: "gql", result: primaryResults };
     }
   );
 
   // All primary fetch requests
-  /* const fetchRequests = Object.keys(fetchEndpoints).map(
-    //
+  const fetchRequests = Object.keys(fetchEndpoints).map(
+    // Each endpoint produces a Promise
     async (endpoint) => {
       const response = await fetch(fetchEndpoints[endpoint]);
       if (!response.ok) {
-        console.error(`fetch "${endpoint}" failed`);
         throw new Error(`fetch "${endpoint}" failed`);
       }
-      const result = await response.json();
+      let result = await response.json();
+      // Remove data hierarchy
+      const keyName = Object.keys(result)[0];
+      result = result[keyName];
 
       return {
         queryName: endpoint,
+        queryType: "fetch",
         result,
       };
     }
-  ); */
+  );
 
   // Once all requests are settled
-  const grandResults = await Promise.all(gqlRequests) //
+  const grandQueryResults = await Promise.all([
+    ...gqlRequests,
+    ...fetchRequests,
+  ]) //
     .catch((err) => {
       alert("Something wrong with data fetching from server :(");
       throw new Error(err);
     });
 
-  grandResults.forEach((query) => {
-    const { queryName, result } = query;
+  // For debugging
+  // console.log(grandQueryResults);
 
-    // Data processing for each query
-    const convertedQueryResult = result.map((edition) => {
-      // 1. Data extraction & restructuring for each edition
-      const {
-        id: artworkId,
-        artistAccount: artistAddr,
-        metadata: { name: artworkName, artist: artistName },
-        auctionEnabled: isBidOnly,
-        bidOnlyReservePrice,
-        metadataPrice,
-        reservePrice,
-        totalAvailable: totalAvai,
-        startDate: startTime,
-        stepSaleStepPrice: priceStep,
-        reserveAuctionStartDate: reserveAuctionStartTime,
-        reserveAuctionEndTimestamp: reserveAuctionEndTime,
-        reserveAuctionBid,
-      } = edition;
+  grandQueryResults.forEach((query) => {
+    const { queryName, queryType, result } = query;
 
-      const outputEdition = {
-        artworkInfo: {
-          artworkName,
-          artworkId,
-          artistName,
-          artistAddr,
-          totalAvai,
-        },
-        auctionInfo: {
-          isBidOnly,
-          bidOnlyReservePrice,
-          reservePrice,
-          metadataPrice,
-          startTime,
-          priceStep,
-          reserveAuctionStartTime,
-          reserveAuctionEndTime,
-          reserveAuctionBid,
-        },
-      };
+    switch (queryType) {
+      // Not much data processing for fetch queries
+      case "fetch":
+        dataStore[queryName] = result;
+        break;
+      // Data processing for each GQL query
+      case "gql":
+        const convertedQueryResult = result.map((edition) => {
+          // 1. Data extraction & restructuring for each edition
+          const {
+            id: artworkId,
+            artistAccount: artistAddr,
+            metadata: { name: artworkName, artist: artistName },
+            auctionEnabled: isBidOnly,
+            bidOnlyReservePrice,
+            metadataPrice,
+            reservePrice,
+            totalAvailable: totalAvai,
+            startDate: startTime,
+            stepSaleStepPrice: priceStep,
+            reserveAuctionStartDate: reserveAuctionStartTime,
+            reserveAuctionEndTimestamp: reserveAuctionEndTime,
+            reserveAuctionBid,
+          } = edition;
 
-      // 2. Convert all string-notated numbers into real numbers
-      for (const property in outputEdition) {
-        for (const subProperty in outputEdition[property]) {
-          const testValue = outputEdition[property][subProperty];
-          const isAddr = addrRegex.test(testValue);
-          const isNumber = testValue === "0" || parseInt(testValue);
-          // Only convert strings that are numbers but not blockchain addresses ("0xXXXXX")
-          if (!isAddr && isNumber) {
-            outputEdition[property][subProperty] = parseInt(testValue);
+          const outputEdition = {
+            artworkInfo: {
+              artworkName,
+              artworkId,
+              artistName,
+              artistAddr,
+              totalAvai,
+            },
+            auctionInfo: {
+              isBidOnly,
+              bidOnlyReservePrice,
+              reservePrice,
+              metadataPrice,
+              startTime,
+              priceStep,
+              reserveAuctionStartTime,
+              reserveAuctionEndTime,
+              reserveAuctionBid,
+            },
+          };
+
+          // 2. Convert all string-notated numbers into real numbers
+          for (const property in outputEdition) {
+            for (const subProperty in outputEdition[property]) {
+              const testValue = outputEdition[property][subProperty];
+              const isAddr = addrRegex.test(testValue);
+              const isNumber = testValue === "0" || parseInt(testValue);
+              // Only convert strings that are numbers but not blockchain addresses ("0xXXXXX")
+              if (!isAddr && isNumber) {
+                outputEdition[property][subProperty] = parseInt(testValue);
+              }
+            }
           }
-        }
-      }
-      // return converted edition
-      return outputEdition;
-    });
+          // return converted edition in convertedQueryResult
+          return outputEdition;
+        });
+        // Assign to dataStore.js after finishing data converion in that query
+        dataStore[queryName] = convertedQueryResult;
+        break;
 
-    // Assign to dataStore.js after finishing data converion in that query
-    dataStore[queryName] = convertedQueryResult;
+      default:
+        throw new Error(`Unknown queryName ${queryName} in grandQueryResults`);
+    }
   });
+
+  // For debugging
+  // console.log(dataStore);
 
   // Display the App once all data are loaded
   store.dispatch({ type: "CONFIRM_DATA_LOADED" });
