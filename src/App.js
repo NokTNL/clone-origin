@@ -9,6 +9,8 @@ import Hero from "./components/Hero";
 import LatestArtworks from "./components/LatestArtwork";
 import DynamicBanner from "./components/DynamicBanner";
 import StaticBanner2Col from "./components/StaticBanner2Col";
+import ScheduledEditions from "./components/ScheduledEditions";
+import ReserveAuctions from "./components/ReserveAuctions";
 
 const StyledApp = styled.div`
   /* To disable scrolling when collapsable menu is displaying */
@@ -25,7 +27,7 @@ function App() {
   /* State initialisation code */
   useEffect(() => {
     // Load data for the whole page
-    // dataLoader();
+    dataLoader();
 
     // Renew timeNow every second to mensure countdowns are working
     setInterval(() => {
@@ -39,20 +41,20 @@ function App() {
         isShowingMenu={isShowingMenu}
         setIsShowingMenu={setIsShowingMenu}
       />
-      {
-        /* isDataLoaded */ true && (
-          <>
-            <Hero />
-            <LatestArtworks />
-            <DynamicBanner index={0} />
-            <DynamicBanner index={1} />
-            <StaticBanner2Col index={0} />
-            <DynamicBanner index={2} />
-            <StaticBanner2Col index={1} />
-            <StaticBanner2Col index={2} />
-          </>
-        )
-      }
+      {isDataLoaded /* true */ && (
+        <>
+          <Hero />
+          <LatestArtworks />
+          <DynamicBanner index={0} />
+          <ScheduledEditions />
+          <DynamicBanner index={1} />
+          <ReserveAuctions />
+          <StaticBanner2Col index={0} />
+          <DynamicBanner index={2} />
+          <StaticBanner2Col index={1} />
+          <StaticBanner2Col index={2} />
+        </>
+      )}
     </StyledApp>
   );
 }

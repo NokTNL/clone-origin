@@ -31,8 +31,8 @@ export default function StaticBanner2Col({ index }) {
       <Banner2Col bgColor={bgColor} textColor={textColor}>
         <Banner2ColTitle>{title}</Banner2ColTitle>
         <Banner2ColBody>
-          {content.map((paragraph) => (
-            <p>{paragraph}</p>
+          {content.map((paragraph, index) => (
+            <p key={index}>{paragraph}</p>
           ))}
           <a href={link}>
             <Button color={textColor}>

@@ -7,7 +7,7 @@ const StyledMaxWidthContainer = styled(MaxWidthContainer)`
   padding-bottom: 3rem;
 `;
 
-const SectionHeader = styled.h4`
+const SectionHeader = styled.h3`
   padding: 1rem 0;
 `;
 

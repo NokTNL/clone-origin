@@ -1,5 +1,5 @@
 // !! For test only!
-import exampleData from "./example-data";
+// import exampleData from "./example-data";
 
 let data = {};
 
@@ -37,18 +37,19 @@ data.latestArtwork = new Array(3).fill({
     // priceStep: present only after sales starts (startTime < Date.now() ) AND when the sales is a step sale
     priceStep: 30000000000000000,
     // --> Case 2 : reserve auction
-    // reserveAuctionStartTime: a reserve auction is starting soon (> Date.now()) (does not coexist with reserveAuctionEndTime)
+    // reserveAuctionEndTime: a reserve auction is ending soon (> Date.now())
+    reserveAuctionEndTime: 1648576825,
+    // reserveAuctionStartTime: a reserve auction is starting soon (> Date.now())
     reserveAuctionStartTime: 0,
     // reserveAuctionStartTime: 1648576825,
-    // reserveAuctionEndTime: a reserve auction is ending soon (> Date.now()) (does not coexist with reserveAuctionStartTime)
-    reserveAuctionEndTime: 1648576825,
     // reserveAuctionBid: if an auction is active (reserveAuctionEndTime > Date.now()), then this is the latest bid
     reserveAuctionBid: 95000000000000000,
   },
 });
+delete data.latestArtwork;
 
 /* !!! For test only */
-data = exampleData;
-console.log("Alert: using off-line example data!!!");
+/* data = exampleData;
+console.log("Alert: using off-line example data!!!"); */
 
 export default data;

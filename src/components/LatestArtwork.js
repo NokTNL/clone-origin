@@ -4,7 +4,7 @@ import Button from "./UI/Button";
 import Section, { SectionHeader, SectionFooter } from "./UI/Section";
 
 export default function LatestArtwork() {
-  // Which group of data to retrieve info from dataStore.js
+  // Which group of data to retrieve info from fetchDataStore.js
   const targetData = "latestArtwork";
 
   return (

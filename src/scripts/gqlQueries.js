@@ -4,7 +4,7 @@ const gqlQueries = {};
 
 //  KO server use SECONDS timestamps
 const timeNow = Math.floor(Date.now() / 1000);
-const timeTomorrow = timeNow + 24 * 3600;
+const timelastweek = timeNow - 7 * 24 * 3600;
 const timeNextWeek = timeNow + 7 * 24 * 3600;
 
 // This requests the banner artwork editions data (ID seems to be random)
@@ -55,8 +55,8 @@ gqlQueries.recentScheduledEditions = {
       $skip: Int!
       $orderBy: String!
       $orderDirection: String!
-      $startGt: String!
-      $startLt: String!
+      $startGt: Int!
+      $startLt: Int!
     ) {
       recentScheduledEditions: editions(
         first: $first
@@ -161,8 +161,8 @@ gqlQueries.recentScheduledEditions = {
     skip: 0,
     orderBy: "startDate",
     orderDirection: "desc",
-    startGt: timeNow.toString(),
-    startLt: timeTomorrow.toString(),
+    startGt: timelastweek,
+    startLt: timeNow,
   },
 };
 
@@ -283,16 +283,17 @@ gqlQueries.soonScheduledEditions = {
 // 1. reserveAuctionsEndingSoon
 gqlQueries.reserveAuctionsEndingSoon = {
   query: gql`
-    query reserveAuctionsStartingSoonQuery($timestamp: String!, $first: Int!) {
-      reserveAuctionsStartingSoon: editions(
+    query ReserveAuctionsEndingSoonQuery($timestamp: String!) {
+      reserveAuctionsEndingSoon: editions(
         where: {
           active: true
           salesType: 5
-          reserveAuctionStartDate_gt: $timestamp
+          reserveAuctionEndTimestamp_gt: $timestamp
+          reserveAuctionStartDate_lt: $timestamp
         }
-        orderBy: reserveAuctionStartDate
-        orderDirection: asc
-        first: $first
+        orderBy: reserveAuctionEndTimestamp
+        orderDirection: desc
+        first: 6
       ) {
         id
         version
@@ -380,12 +381,11 @@ gqlQueries.reserveAuctionsEndingSoon = {
     }
   `,
   variables: {
-    timestamp: timeTomorrow.toString(),
-    first: 5,
+    timestamp: timeNow.toString(),
   },
 };
 
-// 2. reserveAuctionsStartingSoon
+// (2. reserveAuctionsStartingSoon) (Update 1/4/2022: this query is not used anymore, do not use!)
 gqlQueries.reserveAuctionsStartingSoon = {
   query: gql`
     query reserveAuctionsStartingSoonQuery($timestamp: String!, $first: Int!) {
@@ -489,6 +489,8 @@ gqlQueries.reserveAuctionsStartingSoon = {
     first: 4,
   },
 };
+/* !!! This query is deleted */
+delete gqlQueries.reserveAuctionsStartingSoon;
 
 // This queries the latest X artworks
 gqlQueries.latestArtwork = {

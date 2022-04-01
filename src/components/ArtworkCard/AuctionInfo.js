@@ -104,8 +104,29 @@ export default function AuctionInfo({ index, targetData }) {
   /* Generating text and styling for the second column (sometimes overridde first column info) */
   const secondColData = { title: "", subtitle: "" };
   const secondColColor = { title: "", subtitle: "" };
-  //  --> Case 1 : not reserve auction
-  if (startTime !== 0) {
+  // --> Check if it is a soon-ending reserve auction, this info take precedance
+  //    - if both reserveAuctionStartTime and reserveAuctionEndTime exists,
+  //    reserveAuctionEndTime takes precedance and display "Ending soon")
+  if (reserveAuctionEndTime !== 0) {
+    // Change the whole AuctionInfo's styling
+    isReserveAuctionEnding = true;
+
+    firstColData.title = "Current bid";
+    firstColData.extraTitle = "";
+    firstColData.subtitle = `Ξ ${reserveAuctionBid / 1000000000000000000}`;
+    secondColData.title = "Auction ends in";
+    const { h, m, s } = createTimeDiff(reserveAuctionEndTime, timeNow);
+    secondColData.subtitle = `${h} h ${m} m ${s} s`;
+  }
+  // if no "reserveAuctionEndTime" but has a "reserveAuctionStartTime", then it is a soon starting reserve auction
+  else if (reserveAuctionStartTime !== 0) {
+    secondColData.title = "Starts in";
+    const { h, m, s } = createTimeDiff(reserveAuctionStartTime, timeNow);
+    secondColData.subtitle = `${h} h ${m} m ${s} s`;
+  }
+  // if both reserve auction start/end time not available then it is not a reserve auction
+  // Add info depends on whether the sale has started or not
+  else if (startTime !== 0) {
     // If the sale is yet to start
     if (startTime * 1000 > initialTimeNow) {
       secondColData.title = "Starts in";
@@ -115,7 +136,7 @@ export default function AuctionInfo({ index, targetData }) {
     }
     // If the sale has started
     else {
-      // Check if it is a step sale
+      // Check if it is a step sale and show step price if available
       if (priceStep !== 0) {
         secondColData.title = "Next price";
         secondColColor.title = "dim";
@@ -124,27 +145,6 @@ export default function AuctionInfo({ index, targetData }) {
         }`;
         secondColColor.subtitle = "alert";
       }
-    }
-  }
-  // --> Case 2 : reserve auction
-  else {
-    // Soon starting auctions
-    if (reserveAuctionStartTime !== 0) {
-      secondColData.title = "Starts in";
-      const { h, m, s } = createTimeDiff(reserveAuctionStartTime, timeNow);
-      secondColData.subtitle = `${h} h ${m} m ${s} s`;
-    }
-    // Soon ending auctions
-    else if (reserveAuctionEndTime !== 0) {
-      // Change the whole AuctionInfo's styling
-      isReserveAuctionEnding = true;
-
-      firstColData.title = "Current bid";
-      firstColData.extraTitle = "";
-      firstColColor.subtitle = `Ξ ${reserveAuctionBid / 1000000000000000000}`;
-      secondColData.title = "Auction ends in";
-      const { h, m, s } = createTimeDiff(reserveAuctionEndTime, timeNow);
-      secondColData.subtitle = `${h} h ${m} m ${s} s`;
     }
   }
 

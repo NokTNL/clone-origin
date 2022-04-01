@@ -108,7 +108,7 @@ export default async function dataLoader() {
     });
 
   // For debugging
-  // console.log(grandQueryResults);
+  console.log(grandQueryResults);
 
   grandQueryResults.forEach((query) => {
     const { queryName, queryType, result } = query;
@@ -184,7 +184,7 @@ export default async function dataLoader() {
   });
 
   // For debugging
-  console.log(JSON.stringify(fetchDataStore));
+  console.log(fetchDataStore);
 
   // Display the App once all data are loaded
   reduxStore.dispatch({ type: "CONFIRM_DATA_LOADED" });
