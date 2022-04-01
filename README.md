@@ -17,6 +17,8 @@ A clone of [KnownOrigin's homepage](https://knownorigin.io) (KnownOrigin is an E
   - created my own UI "framework" (global classes in `src/index.css` and reusable styled componenets in `src/components/UI`)
   - Used _Styled Component_ to scope CSS and fine-tune styling based on the props passed in (e.g. in `src/components/ArtworkCard/AuctionInfo.js`)
 
+I used my own [React boilerplate repo](https://github.com/NokTNL/react-boilerplate) to save me some time on installing libraries and creating files one by one.
+
 ## Takeaways
 - Making your own UI framework is considerably harder than using ready-to-use frameworks like Bootstrap and Material UI
 - *Documentation is a good thing*. The data server's API does not have thorough documentation so I needed to decrypt its usage from individual network requests in Chrome DevTool...
