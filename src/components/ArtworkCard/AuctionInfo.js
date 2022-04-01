@@ -120,6 +120,10 @@ export default function AuctionInfo({ index, targetData }) {
   }
   // if no "reserveAuctionEndTime" but has a "reserveAuctionStartTime", then it is a soon starting reserve auction
   else if (reserveAuctionStartTime !== 0) {
+    // Grey out first column
+    firstColColor.title = "dim";
+    firstColColor.subtitle = "dim";
+
     secondColData.title = "Starts in";
     const { h, m, s } = createTimeDiff(reserveAuctionStartTime, timeNow);
     secondColData.subtitle = `${h} h ${m} m ${s} s`;
@@ -129,6 +133,10 @@ export default function AuctionInfo({ index, targetData }) {
   else if (startTime !== 0) {
     // If the sale is yet to start
     if (startTime * 1000 > initialTimeNow) {
+      // Grey out first column
+      firstColColor.title = "dim";
+      firstColColor.subtitle = "dim";
+
       secondColData.title = "Starts in";
       // This will renew every second with "timeNow"
       const { h, m, s } = createTimeDiff(startTime, timeNow);
