@@ -2,7 +2,7 @@
 
 <img width="1419" alt="Screenshot 2022-04-01 at 3 36 24 PM" src="https://user-images.githubusercontent.com/94875599/161285475-1e680d05-1dad-48d8-93e5-95bab86948b4.png">
 
-Live preview: https://noktnl.github.io/clone-origin/
+➡️ Live preview: https://noktnl.github.io/clone-origin/ ⬅️
 
 A clone of [KnownOrigin's homepage](https://knownorigin.io) (KnownOrigin is an Ethereum NFT marketplace). All on-chain and off-chain data are fetched from KnownOrigin's servers. It shows real-time artwork info and matches the originl website as close as possible.
 
