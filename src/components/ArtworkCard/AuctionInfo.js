@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 
@@ -65,13 +65,15 @@ export default function AuctionInfo({ index, targetData }) {
   // Helper functions
   // padZeros: for padding zeros in time units
   const padZeros = (num, places) => String(num).padStart(places, "0");
-  // createTimeDiff: returns time difference in hh:mm:ss format
-  const createTimeDiff = (timeInput, timeNow) => {
+  // createTimeDiff: returns time difference in dd::hh:mm (if more than one day) ...
+  // ... or hh:mm:ss format (if less than one day)
+  const createTimeDiffText = (timeInput, timeNow) => {
     const rawTimeDiff = new Date(parseInt(timeInput * 1000) - timeNow);
+    const d = padZeros(Math.floor(rawTimeDiff / 86400000), 2);
     const h = padZeros(rawTimeDiff.getUTCHours(), 2);
     const m = padZeros(rawTimeDiff.getUTCMinutes(), 2);
     const s = padZeros(rawTimeDiff.getUTCSeconds(), 2);
-    return { h, m, s };
+    return d > 0 ? `${d} d ${h} h ${m} m` : `${h} h ${m} m ${s} s`;
   };
 
   /* Generating text and styling for the first column */
@@ -115,8 +117,7 @@ export default function AuctionInfo({ index, targetData }) {
     firstColData.extraTitle = "";
     firstColData.subtitle = `Ξ ${reserveAuctionBid / 1000000000000000000}`;
     secondColData.title = "Auction ends in";
-    const { h, m, s } = createTimeDiff(reserveAuctionEndTime, timeNow);
-    secondColData.subtitle = `${h} h ${m} m ${s} s`;
+    secondColData.subtitle = createTimeDiffText(reserveAuctionEndTime, timeNow);
   }
   // if no "reserveAuctionEndTime" but has a "reserveAuctionStartTime", then it is a soon starting reserve auction
   else if (reserveAuctionStartTime !== 0) {
@@ -125,8 +126,10 @@ export default function AuctionInfo({ index, targetData }) {
     firstColColor.subtitle = "dim";
 
     secondColData.title = "Starts in";
-    const { h, m, s } = createTimeDiff(reserveAuctionStartTime, timeNow);
-    secondColData.subtitle = `${h} h ${m} m ${s} s`;
+    secondColData.subtitle = createTimeDiffText(
+      reserveAuctionStartTime,
+      timeNow
+    );
   }
   // if both reserve auction start/end time not available then it is not a reserve auction
   // Add info depends on whether the sale has started or not
@@ -139,8 +142,7 @@ export default function AuctionInfo({ index, targetData }) {
 
       secondColData.title = "Starts in";
       // This will renew every second with "timeNow"
-      const { h, m, s } = createTimeDiff(startTime, timeNow);
-      secondColData.subtitle = `${h} h ${m} m ${s} s`;
+      secondColData.subtitle = createTimeDiffText(startTime, timeNow);
     }
     // If the sale has started
     else {
