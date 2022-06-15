@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 
-import dataLoader from "./scripts/dataLoader";
+import loadData from "./scripts/loadData";
 
 import NavBar from "./components/Navbar";
 import Hero from "./components/Hero";
@@ -27,7 +27,7 @@ function App() {
   /* State initialisation code */
   useEffect(() => {
     // Load data for the whole page
-    dataLoader();
+    loadData();
 
     // Renew timeNow every second to mensure countdowns are working
     setInterval(() => {

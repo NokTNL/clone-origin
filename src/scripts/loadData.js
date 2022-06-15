@@ -15,67 +15,17 @@ https://us-central1-known-origin-io.cloudfunctions.net/main/api/network/1/collec
 - Will only return useful stuff when there is a minimum bid value available
 https://us-central1-known-origin-io.cloudfunctions.net/main/api/network/1/reserve/edition/{artworkId}
 */
-import { GraphQLClient } from "graphql-request";
 
-import gqlQueries from "./gqlQueries";
 import fetchEndpoints from "./fetchEndpoints";
 import reduxStore from "../store/mainStore";
 import fetchDataStore from "../store/fetchDataStore";
+import queryGql from "./gql/queryGql";
 
-// For testing if a string is a blockchain address:
-const addrRegex = /^0x[0-9a-f]+$/i;
-
-export default async function dataLoader() {
-  // All primary GQL requests
-  const gqlClient = new GraphQLClient(
-    "https://api.thegraph.com/subgraphs/name/knownorigin/known-origin"
-  );
-
-  const gqlRequests = Object.keys(gqlQueries).map(
-    // Each query creates a Promise to be resolved
-    async (queryName) => {
-      const { query, variables } = gqlQueries[queryName];
-
-      let primaryResults = await gqlClient
-        .request(query, variables) //
-        .catch(() => {
-          throw new Error(`GQL query for "${queryName}" failed`);
-        });
-
-      // Remove hierarchy
-      const keyName = Object.keys(primaryResults)[0];
-      primaryResults = primaryResults[keyName];
-      // Extra requests: for fetching e.g. the bioOnlyReservePrice based on the data inside primaryResults
-      // Each extra-request also creates a Promise to be resolved; only the extra requests are resolved, all GQL requests are resolved
-      const extraRequests = await primaryResults.map(async (edition, index) => {
-        // 1. Fetch "bidOnlyReservePrice" for each edition if it is a bit-only edition
-        const { auctionEnabled: isBidOnly, id: artworkId } = edition;
-        if (isBidOnly) {
-          const extraResponse = await fetch(
-            `https://us-central1-known-origin-io.cloudfunctions.net/main/api/network/1/reserve/edition/${artworkId}`
-          );
-
-          if (!extraResponse.ok) {
-            throw new Error(
-              `fetch "bidOnlyReservePrice" for ${queryName} edition ${index} failed`
-            );
-          }
-          const extraResult = await extraResponse.json();
-
-          edition.bidOnlyReservePrice = extraResult.eth_reserve_in_wei || "0";
-        } else {
-          edition.bidOnlyReservePrice = "0";
-        }
-        // returns these as the "value" of the individual extraEditionRequests promise
-        return edition.bidOnlyReservePrice;
-      });
-      const extraRequestsResults = await Promise.all(extraRequests);
-
-      // return these as the value of the gqlRequest promise
-      return { queryName, queryType: "gql", result: primaryResults };
-    }
-  );
-
+export default async function loadData() {
+  // The following request promises are created in one go:
+  // 1. Create an array of GQL result PROMISES (no `await`)
+  const gqlPromises = queryGql();
+  console.log(gqlPromises);
   // All primary fetch requests
   const fetchRequests = Object.keys(fetchEndpoints).map(
     // Each endpoint produces a Promise
@@ -99,7 +49,7 @@ export default async function dataLoader() {
 
   // Once all requests are settled
   const grandQueryResults = await Promise.all([
-    ...gqlRequests,
+    ...gqlPromises,
     ...fetchRequests,
   ]) //
     .catch((err) => {
@@ -160,6 +110,9 @@ export default async function dataLoader() {
           };
 
           // 2. Convert all string-notated numbers into real numbers
+          // For testing if a string is a blockchain address:
+          const addrRegex = /^0x[0-9a-f]+$/i;
+
           for (const property in outputEdition) {
             for (const subProperty in outputEdition[property]) {
               const testValue = outputEdition[property][subProperty];
