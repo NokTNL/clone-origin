@@ -20,6 +20,7 @@ import reduxStore from "../store/mainStore";
 import fetchDataStore from "../store/fetchDataStore";
 import queryGql from "./gql/queryGql";
 import makeFetchQueries from "./fetch/makeFetchQueries";
+import processOneQueryResult from "./processOneQueryResult";
 
 export default async function loadData() {
   // The following request promises are created in one go:
@@ -28,7 +29,7 @@ export default async function loadData() {
   // 2. Create an array of `fetch` result Promises
   const fetchPromises = makeFetchQueries();
 
-  // Once all requests are settled
+  // Wait for all requests to be settled
   const grandQueryResults = await Promise.all([
     ...gqlPromises,
     ...fetchPromises,
@@ -41,80 +42,9 @@ export default async function loadData() {
   // For debugging
   console.log(grandQueryResults);
 
+  // Data processing & assigning to store
   grandQueryResults.forEach((query) => {
-    const { queryName, queryType, result } = query;
-
-    switch (queryType) {
-      // Not much data processing for fetch queries
-      case "fetch":
-        fetchDataStore[queryName] = result;
-        break;
-      // Data processing for each GQL query
-      case "gql":
-        const convertedQueryResult = result.map((edition) => {
-          // 1. Data extraction & restructuring for each edition
-          const {
-            id: artworkId,
-            artistAccount: artistAddr,
-            metadata: { name: artworkName, artist: artistName },
-            auctionEnabled: isBidOnly,
-            bidOnlyReservePrice,
-            metadataPrice,
-            reservePrice,
-            totalAvailable: totalAvai,
-            startDate: startTime,
-            stepSaleStepPrice: priceStep,
-            reserveAuctionStartDate: reserveAuctionStartTime,
-            reserveAuctionEndTimestamp: reserveAuctionEndTime,
-            reserveAuctionBid,
-          } = edition;
-
-          const outputEdition = {
-            artworkInfo: {
-              artworkName,
-              artworkId,
-              artistName,
-              artistAddr,
-              totalAvai,
-            },
-            auctionInfo: {
-              isBidOnly,
-              bidOnlyReservePrice,
-              reservePrice,
-              metadataPrice,
-              startTime,
-              priceStep,
-              reserveAuctionStartTime,
-              reserveAuctionEndTime,
-              reserveAuctionBid,
-            },
-          };
-
-          // 2. Convert all string-notated numbers into real numbers
-          // For testing if a string is a blockchain address:
-          const addrRegex = /^0x[0-9a-f]+$/i;
-
-          for (const property in outputEdition) {
-            for (const subProperty in outputEdition[property]) {
-              const testValue = outputEdition[property][subProperty];
-              const isAddr = addrRegex.test(testValue);
-              const isNumber = testValue === "0" || parseInt(testValue);
-              // Only convert strings that are numbers but not blockchain addresses ("0xXXXXX")
-              if (!isAddr && isNumber) {
-                outputEdition[property][subProperty] = parseInt(testValue);
-              }
-            }
-          }
-          // return converted edition in convertedQueryResult
-          return outputEdition;
-        });
-        // Assign to dataStore.js after finishing data converion in that query
-        fetchDataStore[queryName] = convertedQueryResult;
-        break;
-
-      default:
-        throw new Error(`Unknown queryName ${queryName} in grandQueryResults`);
-    }
+    processOneQueryResult(query);
   });
 
   // For debugging
