@@ -16,41 +16,22 @@ https://us-central1-known-origin-io.cloudfunctions.net/main/api/network/1/collec
 https://us-central1-known-origin-io.cloudfunctions.net/main/api/network/1/reserve/edition/{artworkId}
 */
 
-import fetchEndpoints from "./fetchEndpoints";
 import reduxStore from "../store/mainStore";
 import fetchDataStore from "../store/fetchDataStore";
 import queryGql from "./gql/queryGql";
+import makeFetchQueries from "./fetch/makeFetchQueries";
 
 export default async function loadData() {
   // The following request promises are created in one go:
   // 1. Create an array of GQL result PROMISES (no `await`)
   const gqlPromises = queryGql();
-  console.log(gqlPromises);
-  // All primary fetch requests
-  const fetchRequests = Object.keys(fetchEndpoints).map(
-    // Each endpoint produces a Promise
-    async (endpoint) => {
-      const response = await fetch(fetchEndpoints[endpoint]);
-      if (!response.ok) {
-        throw new Error(`fetch "${endpoint}" failed`);
-      }
-      let result = await response.json();
-      // Remove data hierarchy
-      const keyName = Object.keys(result)[0];
-      result = result[keyName];
-
-      return {
-        queryName: endpoint,
-        queryType: "fetch",
-        result,
-      };
-    }
-  );
+  // 2. Create an array of `fetch` result Promises
+  const fetchPromises = makeFetchQueries();
 
   // Once all requests are settled
   const grandQueryResults = await Promise.all([
     ...gqlPromises,
-    ...fetchRequests,
+    ...fetchPromises,
   ]) //
     .catch((err) => {
       alert("Something wrong with data fetching from server :(");
